@@ -6,201 +6,254 @@ import streamlit as st
 import plotly.express as px
 
 
-# --------------------------------------------------
-# 1. Configuração
-# --------------------------------------------------
-
 PASTA_PROJETO = Path(__file__).parent
 PASTA_DADOS = PASTA_PROJETO / "dados_processados"
 
+ROSA = "#B85D7B"
+ROSA_CLARO = "#E8C3CE"
+AMEIXA = "#765064"
+CREME = "#FBF8F5"
+TEXTO = "#35313A"
+CINZA = "#827C84"
+LINHA = "#E9E1E2"
+
+
 st.set_page_config(
     page_title="Data Quality Studio",
+    page_icon="◌",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 
-# --------------------------------------------------
-# 2. Identidade visual adaptável ao tema
-# --------------------------------------------------
+# Estilos
 
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
     :root {
-        --dq-accent: #B84F73;
-        --dq-accent-soft: #E7B8C8;
-        --dq-line: var(--secondary-background-color);
+        --dq-rose: #B85D7B;
+        --dq-plum: #765064;
+        --dq-pink: #E8C3CE;
+        --dq-line: #E9E1E2;
     }
 
     .stApp {
-        background: var(--background-color);
-        color: var(--text-color);
+        background: #FBF8F5;
+        color: #35313A;
     }
 
     .block-container {
-        max-width: 1440px;
-        padding-top: 2.5rem;
-        padding-bottom: 3rem;
+        max-width: 1500px;
+        padding: 2.5rem 3rem 1.5rem;
     }
 
-    h1, h2, h3, p, label, span {
-        color: inherit;
+    [data-testid="stHeader"] {
+        background: transparent;
+    }
+
+    h1, h2, h3 {
+        color: #35313A !important;
+        letter-spacing: -0.035em !important;
     }
 
     h1 {
-        font-size: clamp(2rem, 4vw, 3rem) !important;
+        font-size: clamp(2.1rem, 4vw, 3.2rem) !important;
         font-weight: 650 !important;
-        letter-spacing: -0.055em;
-        line-height: 1.1 !important;
+        line-height: 1.12 !important;
     }
 
     h2 {
-        font-size: 1.45rem !important;
+        font-size: 1.35rem !important;
         font-weight: 600 !important;
-        letter-spacing: -0.035em;
     }
 
     h3 {
-        font-size: 1.05rem !important;
+        font-size: 1.02rem !important;
         font-weight: 600 !important;
     }
 
+    p, label, [data-testid="stCaptionContainer"] {
+        color: #827C84;
+    }
+
+    .dq-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #35313A;
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        padding: 0.25rem 0 1.8rem;
+    }
+
+    .dq-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #F0DCE2;
+        color: #96506A;
+        font-size: 1.4rem;
+    }
+
+    .dq-brand-accent {
+        color: var(--dq-rose);
+    }
+
     .dq-eyebrow {
-        color: var(--dq-accent);
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.16em;
+        font-size: 0.7rem;
+        font-weight: 650;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
-        margin-bottom: 0.7rem;
+        color: var(--dq-plum);
+        margin-bottom: 0.65rem;
     }
 
     .dq-intro {
-        max-width: 760px;
-        font-size: 1rem;
-        line-height: 1.75;
-        opacity: 0.78;
-    }
-
-    .dq-section-note {
-        font-size: 0.86rem;
-        opacity: 0.7;
-        line-height: 1.6;
-        margin-top: -0.5rem;
-        margin-bottom: 1.1rem;
+        font-size: 0.98rem;
+        line-height: 1.7;
+        color: #746D76;
+        max-width: 650px;
+        margin-top: 0.8rem;
     }
 
     .dq-rule {
-        border: 0;
+        border: none;
         border-top: 1px solid var(--dq-line);
-        margin: 1.8rem 0;
-    }
-
-    .dq-kpi-label {
-        font-size: 0.78rem;
-        opacity: 0.72;
-        margin-bottom: 0.55rem;
-    }
-
-    .dq-kpi-value {
-        font-size: clamp(1.45rem, 2.5vw, 2rem);
-        font-weight: 650;
-        letter-spacing: -0.045em;
-        line-height: 1.25;
-        overflow-wrap: anywhere;
+        margin: 1.65rem 0;
     }
 
     .dq-kpi {
-        padding: 0.65rem 0 0.8rem 1rem;
-        border-left: 2px solid var(--dq-accent-soft);
-        min-height: 88px;
+        height: 100%;
+        min-height: 112px;
+        padding: 1.1rem 1.15rem;
+        border: 1px solid var(--dq-line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.72);
+    }
+
+    .dq-kpi-label {
+        font-size: 0.8rem;
+        color: #827C84;
+        margin-bottom: 0.65rem;
+    }
+
+    .dq-kpi-value {
+        font-size: clamp(1.35rem, 2vw, 1.9rem);
+        font-weight: 650;
+        letter-spacing: -0.045em;
+        color: #35313A;
+        overflow-wrap: anywhere;
+        line-height: 1.2;
+    }
+
+    .dq-kpi-accent {
+        width: 27px;
+        height: 3px;
+        background: var(--dq-rose);
+        border-radius: 5px;
+        margin-top: 0.9rem;
+    }
+
+    .dq-panel {
+        padding: 1.1rem 1.2rem 0.7rem;
+        border: 1px solid var(--dq-line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.68);
+    }
+
+    .dq-panel-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #35313A;
+        margin-bottom: 0.25rem;
+    }
+
+    .dq-panel-note {
+        color: #827C84;
+        font-size: 0.8rem;
+        line-height: 1.55;
     }
 
     .dq-status {
-        padding: 0.95rem 1.1rem;
-        border-left: 3px solid var(--dq-accent);
-        background: var(--secondary-background-color);
-        border-radius: 0 5px 5px 0;
-        line-height: 1.65;
-        margin: 0.8rem 0 1rem 0;
+        padding: 0.85rem 1rem;
+        border: 1px solid #EED6DC;
+        border-radius: 9px;
+        background: #F9EAE9;
+        color: #80515C;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        margin: 0.5rem 0 1rem;
     }
 
     .dq-footer {
-        font-size: 0.78rem;
-        opacity: 0.65;
-        line-height: 1.7;
-    }
-
-    div[data-testid="stMetric"] {
-        background: var(--secondary-background-color);
-        border: 1px solid var(--dq-line);
-        padding: 1rem 1.1rem;
-        border-radius: 5px;
-    }
-
-    div[data-testid="stMetricLabel"],
-    div[data-testid="stMetricValue"],
-    div[data-testid="stMetricDelta"] {
-        color: var(--text-color);
-    }
-
-    div[data-testid="stMetricLabel"] {
-        font-size: 0.82rem;
-    }
-
-    div[data-testid="stMetricValue"] {
-        font-weight: 650;
-        letter-spacing: -0.035em;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        color: #918992;
+        font-size: 0.75rem;
+        padding: 0.2rem 0 0.8rem;
     }
 
     div[data-testid="stSelectbox"] label,
     div[data-testid="stNumberInput"] label {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #625A65;
+    }
+
+    div[data-testid="stSelectbox"] > div > div,
+    div[data-testid="stNumberInput"] input {
+        border-radius: 8px;
+        border-color: var(--dq-line);
     }
 
     div[data-testid="stDataFrame"] {
         border: 1px solid var(--dq-line);
-        border-radius: 5px;
+        border-radius: 9px;
         overflow: hidden;
     }
 
     div[data-testid="stAlert"] {
-        border-radius: 5px;
+        border-radius: 9px;
     }
 
-    button[kind="secondary"] {
-        border-radius: 5px;
+    .stButton button {
+        border-radius: 8px;
     }
 
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 1.3rem;
+            padding: 1.2rem 1rem;
         }
 
         h1 {
-            font-size: 2rem !important;
+            font-size: 2.15rem !important;
+        }
+
+        .dq-kpi {
+            min-height: 95px;
+            padding: 0.9rem;
         }
     }
-</style>
-""", unsafe_allow_html=True)
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
-# --------------------------------------------------
-# 3. Carregar os dados processados
-# --------------------------------------------------
+# Leitura dos dados
 
 @st.cache_data
 def carregar_dados():
-    compras = pd.read_csv(
-        PASTA_DADOS / "compras_limpo.csv"
-    )
-
-    pedidos = pd.read_csv(
-        PASTA_DADOS / "pedidos_limpo.csv"
-    )
-
-    validacao = pd.read_csv(
-        PASTA_DADOS / "validacao.csv"
-    )
+    compras = pd.read_csv(PASTA_DADOS / "compras_limpo.csv")
+    pedidos = pd.read_csv(PASTA_DADOS / "pedidos_limpo.csv")
+    validacao = pd.read_csv(PASTA_DADOS / "validacao.csv")
 
     return compras, pedidos, validacao
 
@@ -208,9 +261,7 @@ def carregar_dados():
 compras, pedidos, validacao = carregar_dados()
 
 
-# --------------------------------------------------
-# 4. Preparar os tipos
-# --------------------------------------------------
+# Preparação dos dados
 
 compras["data_compra"] = pd.to_datetime(
     compras["data_compra"],
@@ -242,33 +293,34 @@ validacao["valor_calculado"] = pd.to_numeric(
     errors="coerce"
 )
 
-# Evita que valores ausentes na situação sejam tratados
-# silenciosamente como registros válidos.
-validacao["situacao"] = (
-    validacao["situacao"]
-    .fillna("SITUAÇÃO NÃO INFORMADA")
+validacao["situacao"] = validacao["situacao"].fillna(
+    "SITUAÇÃO NÃO INFORMADA"
 )
 
 
-# --------------------------------------------------
-# 5. Cabeçalho
-# --------------------------------------------------
+# Cabeçalho
 
 st.markdown(
-    '<div class="dq-eyebrow">Dados · Análise · Confiabilidade</div>',
+    """
+    <div class="dq-brand">
+        <span class="dq-mark">◌</span>
+        <span>Data Quality <span class="dq-brand-accent">Studio</span></span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="dq-eyebrow">CONSULTA · ANÁLISE · DADOS</div>',
     unsafe_allow_html=True
 )
 
 st.title("Data Quality Studio")
 
 st.markdown(
-    """
-    <p class="dq-intro">
-        Uma leitura da qualidade dos dados de compras e pedidos:
-        o que foi registrado, o que confere e o que precisa ser
-        investigado antes de virar informação para o negócio.
-    </p>
-    """,
+    '<p class="dq-intro">'
+    'Consulta e análise de dados de compras e pedidos.'
+    '</p>',
     unsafe_allow_html=True
 )
 
@@ -278,32 +330,30 @@ st.markdown(
 )
 
 
-# --------------------------------------------------
-# 6. Indicadores gerais
-# --------------------------------------------------
+# Indicadores
 
 total_compras = len(compras)
-
 valor_registrado = compras["valor_total"].sum()
-
 total_clientes = compras["cliente_id"].nunique()
+total_problemas = int((validacao["situacao"] != "OK").sum())
 
-total_problemas = int(
-    (validacao["situacao"] != "OK").sum()
-)
+
+def formatar_moeda(valor):
+    return (
+        f"R$ {valor:,.2f}"
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    )
+
 
 col1, col2, col3, col4 = st.columns(4)
 
 indicadores = [
-    (col1, "Compras analisadas", f"{total_compras:,}"),
-    (
-        col2,
-        "Valor registrado",
-        f"R$ {valor_registrado:,.2f}".replace(",", "X")
-        .replace(".", ",").replace("X", ".")
-    ),
-    (col3, "Clientes identificados", f"{total_clientes:,}"),
-    (col4, "Registros para revisar", f"{total_problemas:,}")
+    (col1, "Compras", f"{total_compras:,}"),
+    (col2, "Valor das compras", formatar_moeda(valor_registrado)),
+    (col3, "Clientes", f"{total_clientes:,}"),
+    (col4, "Para revisar", f"{total_problemas:,}")
 ]
 
 for coluna, rotulo, valor in indicadores:
@@ -313,35 +363,28 @@ for coluna, rotulo, valor in indicadores:
             <div class="dq-kpi">
                 <div class="dq-kpi-label">{rotulo}</div>
                 <div class="dq-kpi-value">{valor}</div>
+                <div class="dq-kpi-accent"></div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-st.caption(
-    "O valor registrado corresponde à soma das compras. "
-    "Não representa necessariamente receita confirmada."
-)
+st.caption("Soma dos valores informados nas compras.")
 
 
-# --------------------------------------------------
-# 7. Filtros
-# --------------------------------------------------
+# Filtros
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
-st.subheader("Explorar compras")
-
-st.markdown(
-    '<p class="dq-section-note">'
-    'Combine os filtros para analisar um recorte dos registros.'
-    '</p>',
-    unsafe_allow_html=True
+col_titulo, col_cliente, col_metodo, col_valor = st.columns(
+    [1.25, 1, 1, 1]
 )
 
-col_filtro1, col_filtro2, col_filtro3 = st.columns(3)
+with col_titulo:
+    st.subheader("Compras")
+    st.caption("Consulte os registros.")
 
-with col_filtro1:
+with col_cliente:
     clientes = sorted(
         compras["cliente_id"].dropna().unique().tolist()
     )
@@ -349,29 +392,30 @@ with col_filtro1:
     cliente_selecionado = st.selectbox(
         "Cliente",
         options=["Todos"] + clientes,
-        format_func=lambda x: "Todos os clientes" if x == "Todos"
-        else str(x)
+        format_func=lambda x: (
+            "Todos os clientes" if x == "Todos" else str(x)
+        )
     )
 
-with col_filtro2:
+with col_metodo:
     metodos = sorted(
-        compras["metodo_pagamento"]
-        .dropna()
-        .unique()
-        .tolist()
+        compras["metodo_pagamento"].dropna().unique().tolist()
     )
 
     metodo_selecionado = st.selectbox(
         "Pagamento",
         options=["Todos"] + metodos,
-        format_func=lambda x: "Todos os métodos" if x == "Todos"
-        else str(x)
+        format_func=lambda x: (
+            "Todos os métodos" if x == "Todos" else str(x)
+        )
     )
 
-with col_filtro3:
-    maior_valor = float(
-        compras["valor_total"].max()
-    ) if not compras.empty else 0.0
+with col_valor:
+    maior_valor = (
+        float(compras["valor_total"].max())
+        if not compras.empty and compras["valor_total"].notna().any()
+        else 0.0
+    )
 
     valor_minimo = st.number_input(
         "Valor mínimo (R$)",
@@ -398,18 +442,13 @@ compras_filtradas = compras_filtradas[
 ]
 
 st.caption(
-    f"{len(compras_filtradas)} de {len(compras)} compras "
-    "correspondem aos filtros selecionados."
+    f"{len(compras_filtradas)} de {len(compras)} compras exibidas."
 )
 
 
-# --------------------------------------------------
-# 8. Visualizações
-# --------------------------------------------------
+# Gráficos
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
-
-st.subheader("Movimento das compras")
 
 grafico1, grafico2 = st.columns(2)
 
@@ -423,7 +462,7 @@ with grafico1:
     )
 
     if resumo_pagamentos.empty:
-        st.info("Não há compras para os filtros selecionados.")
+        st.info("Nenhuma compra encontrada.")
     else:
         fig_pagamentos = px.bar(
             resumo_pagamentos,
@@ -431,33 +470,38 @@ with grafico1:
             y="metodo_pagamento",
             orientation="h",
             text="quantidade",
-            color_discrete_sequence=["#B84F73",
-                                     "#D59AAF",
-                                     "#8F6677"],
-            title="Compras por forma de pagamento",
+            color_discrete_sequence=[ROSA],
+            title="Compras por pagamento",
             labels={
-                "quantidade": "Número de compras",
-                "metodo_pagamento": "Forma de pagamento"
+                "quantidade": "Compras",
+                "metodo_pagamento": "Pagamento"
             }
         )
 
         fig_pagamentos.update_traces(
             textposition="outside",
-            cliponaxis=False
+            cliponaxis=False,
+            marker_line_width=0
         )
 
         fig_pagamentos.update_layout(
             showlegend=False,
-            margin=dict(l=5, r=25, t=55, b=10),
+            margin=dict(l=5, r=30, t=55, b=15),
             yaxis_title=None,
             xaxis_title=None,
-            bargap=0.48
+            bargap=0.45,
+            font=dict(family="Arial, sans-serif", color=TEXTO),
+            title_font=dict(size=16, color=TEXTO),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            xaxis=dict(showgrid=True, gridcolor=LINHA, zeroline=False),
+            yaxis=dict(showgrid=False)
         )
 
         st.plotly_chart(
             fig_pagamentos,
             use_container_width=True,
-            theme="streamlit"
+            theme=None
         )
 
 with grafico2:
@@ -470,52 +514,52 @@ with grafico2:
     )
 
     if resumo_datas.empty:
-        st.info("Não há datas disponíveis para esse recorte.")
+        st.info("Nenhuma data disponível.")
     else:
         fig_receita = px.line(
             resumo_datas,
             x="data_compra",
             y="valor_total",
             markers=True,
-            title="Valor registrado ao longo do tempo",
+            title="Valores por data",
             labels={
                 "data_compra": "Data",
-                "valor_total": "Valor registrado (R$)"
+                "valor_total": "Valor registrado"
             }
         )
 
         fig_receita.update_traces(
-            line=dict(color="#B84F73", width=2.5),
-            marker=dict(size=7, color="#B84F73")
+            line=dict(color=ROSA, width=2.5),
+            marker=dict(size=7, color=ROSA),
+            fill="tozeroy",
+            fillcolor="rgba(184,93,123,0.08)"
         )
 
         fig_receita.update_layout(
-            margin=dict(l=5, r=15, t=55, b=10),
+            margin=dict(l=5, r=15, t=55, b=15),
             xaxis_title=None,
-            yaxis_title=None
+            yaxis_title=None,
+            font=dict(family="Arial, sans-serif", color=TEXTO),
+            title_font=dict(size=16, color=TEXTO),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            xaxis=dict(showgrid=False, zeroline=False),
+            yaxis=dict(showgrid=True, gridcolor=LINHA, zeroline=False),
+            hovermode="x unified"
         )
 
         st.plotly_chart(
             fig_receita,
             use_container_width=True,
-            theme="streamlit"
+            theme=None
         )
 
 
-# --------------------------------------------------
-# 9. Produtos
-# --------------------------------------------------
+# Produtos
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
 st.subheader("Produtos")
-
-st.markdown(
-    '<p class="dq-section-note">'
-    'Quantidade total registrada por produto nos pedidos processados.'
-    '</p>',
-    unsafe_allow_html=True
-)
 
 resumo_produtos = (
     pedidos
@@ -525,7 +569,7 @@ resumo_produtos = (
 )
 
 if resumo_produtos.empty:
-    st.info("Não há produtos disponíveis para análise.")
+    st.info("Nenhum produto encontrado.")
 else:
     fig_produtos = px.bar(
         resumo_produtos,
@@ -533,7 +577,7 @@ else:
         y="produto_id",
         orientation="h",
         text="quantidade",
-        color_discrete_sequence=["#C9859D"],
+        color_discrete_sequence=[AMEIXA],
         labels={
             "produto_id": "Produto",
             "quantidade": "Unidades"
@@ -542,27 +586,31 @@ else:
 
     fig_produtos.update_traces(
         textposition="outside",
-        cliponaxis=False
+        cliponaxis=False,
+        marker_line_width=0
     )
 
     fig_produtos.update_layout(
         showlegend=False,
-        margin=dict(l=5, r=25, t=15, b=10),
+        margin=dict(l=5, r=30, t=15, b=15),
         xaxis_title=None,
         yaxis_title=None,
-        bargap=0.4
+        bargap=0.4,
+        font=dict(family="Arial, sans-serif", color=TEXTO),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(showgrid=True, gridcolor=LINHA, zeroline=False),
+        yaxis=dict(showgrid=False)
     )
 
     st.plotly_chart(
         fig_produtos,
         use_container_width=True,
-        theme="streamlit"
+        theme=None
     )
 
 
-# --------------------------------------------------
-# 10. Detalhamento
-# --------------------------------------------------
+# Tabela de compras
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
@@ -574,14 +622,8 @@ tabela_compras["data_compra"] = (
     tabela_compras["data_compra"].dt.strftime("%d/%m/%Y")
 )
 
-tabela_compras["valor_total"] = tabela_compras[
-    "valor_total"
-].map(
-    lambda x: (
-        f"R$ {x:,.2f}".replace(",", "X")
-        .replace(".", ",").replace("X", ".")
-        if pd.notna(x) else "Não informado"
-    )
+tabela_compras["valor_total"] = tabela_compras["valor_total"].map(
+    lambda x: formatar_moeda(x) if pd.notna(x) else "Não informado"
 )
 
 st.dataframe(
@@ -591,36 +633,24 @@ st.dataframe(
 )
 
 
-# --------------------------------------------------
-# 11. Qualidade e alertas
-# --------------------------------------------------
+# Validação
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
-st.subheader("Pontos para investigar")
+st.subheader("Inconsistências")
 
 problemas = validacao[
     validacao["situacao"] != "OK"
 ].copy()
 
 if problemas.empty:
-    st.markdown(
-        """
-        <div class="dq-status">
-            Não foram identificados registros sinalizados pela
-            validação atual. Isso não significa, por si só, que
-            todos os dados estejam livres de problemas.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.success("Nenhuma inconsistência identificada.")
 else:
     st.markdown(
         f"""
         <div class="dq-status">
-            <strong>{len(problemas)} registro(s)</strong> precisam
-            de revisão. Confira as informações abaixo antes de
-            considerar os valores como confirmados.
+            <strong>{len(problemas)} registro(s)</strong>
+            precisam ser conferidos.
         </div>
         """,
         unsafe_allow_html=True
@@ -633,20 +663,15 @@ else:
     )
 
 
-# --------------------------------------------------
-# 12. Rodapé
-# --------------------------------------------------
+# Rodapé
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
 st.markdown(
     """
     <div class="dq-footer">
-        Projeto demonstrativo de qualidade de dados.
-        Processamento com PySpark; visualização com Python,
-        Pandas, Streamlit e Plotly.<br>
-        Os dados são ilustrativos. Registros sem pedidos associados
-        exigem investigação antes de qualquer conclusão financeira.
+        <span>Data Quality Studio · Python e PySpark</span>
+        <span>Dados fictícios para fins de demonstração.</span>
     </div>
     """,
     unsafe_allow_html=True
