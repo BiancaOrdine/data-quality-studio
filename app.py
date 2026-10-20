@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 import pandas as pd
@@ -12,9 +11,10 @@ PASTA_DADOS = PASTA_PROJETO / "dados_processados"
 ROSA = "#B85D7B"
 ROSA_CLARO = "#E8C3CE"
 AMEIXA = "#765064"
-CREME = "#FBF8F5"
+FUNDO = "#FBF8F5"
+BRANCO = "#FFFFFF"
 TEXTO = "#35313A"
-CINZA = "#827C84"
+TEXTO_SECUNDARIO = "#655965"
 LINHA = "#E9E1E2"
 
 
@@ -32,27 +32,37 @@ st.markdown(
     """
     <style>
     :root {
+        color-scheme: light;
         --dq-rose: #B85D7B;
         --dq-plum: #765064;
         --dq-pink: #E8C3CE;
         --dq-line: #E9E1E2;
+        --dq-bg: #FBF8F5;
+        --dq-text: #35313A;
+        --dq-muted: #655965;
+    }
+
+    html, body, [data-testid="stAppViewContainer"],
+    [data-testid="stMain"], [data-testid="stMainBlockContainer"] {
+        background: #FBF8F5 !important;
+        color: #35313A !important;
     }
 
     .stApp {
-        background: #FBF8F5;
-        color: #35313A;
-    }
-
-    .block-container {
-        max-width: 1500px;
-        padding: 2.5rem 3rem 1.5rem;
+        background: #FBF8F5 !important;
+        color: #35313A !important;
     }
 
     [data-testid="stHeader"] {
-        background: transparent;
+        background: #FBF8F5 !important;
     }
 
-    h1, h2, h3 {
+    [data-testid="stMainBlockContainer"] {
+        max-width: 1500px;
+        padding: 2.2rem 2.5rem 1.5rem;
+    }
+
+    h1, h2, h3, h4 {
         color: #35313A !important;
         letter-spacing: -0.035em !important;
     }
@@ -73,8 +83,8 @@ st.markdown(
         font-weight: 600 !important;
     }
 
-    p, label, [data-testid="stCaptionContainer"] {
-        color: #827C84;
+    p, label {
+        color: #655965;
     }
 
     .dq-brand {
@@ -101,29 +111,28 @@ st.markdown(
     }
 
     .dq-brand-accent {
-        color: var(--dq-rose);
+        color: #B85D7B;
     }
 
     .dq-eyebrow {
         font-size: 0.7rem;
         font-weight: 650;
         letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--dq-plum);
+        color: #765064;
         margin-bottom: 0.65rem;
     }
 
     .dq-intro {
         font-size: 0.98rem;
         line-height: 1.7;
-        color: #746D76;
+        color: #655965 !important;
         max-width: 650px;
         margin-top: 0.8rem;
     }
 
     .dq-rule {
         border: none;
-        border-top: 1px solid var(--dq-line);
+        border-top: 1px solid #E9E1E2;
         margin: 1.65rem 0;
     }
 
@@ -131,22 +140,22 @@ st.markdown(
         height: 100%;
         min-height: 112px;
         padding: 1.1rem 1.15rem;
-        border: 1px solid var(--dq-line);
+        border: 1px solid #E9E1E2;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.72);
+        background: #FFFFFF;
     }
 
     .dq-kpi-label {
         font-size: 0.8rem;
-        color: #827C84;
+        color: #655965 !important;
         margin-bottom: 0.65rem;
     }
 
     .dq-kpi-value {
-        font-size: clamp(1.35rem, 2vw, 1.9rem);
+        font-size: clamp(1.3rem, 2vw, 1.9rem);
         font-weight: 650;
         letter-spacing: -0.045em;
-        color: #35313A;
+        color: #35313A !important;
         overflow-wrap: anywhere;
         line-height: 1.2;
     }
@@ -154,29 +163,9 @@ st.markdown(
     .dq-kpi-accent {
         width: 27px;
         height: 3px;
-        background: var(--dq-rose);
+        background: #B85D7B;
         border-radius: 5px;
         margin-top: 0.9rem;
-    }
-
-    .dq-panel {
-        padding: 1.1rem 1.2rem 0.7rem;
-        border: 1px solid var(--dq-line);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.68);
-    }
-
-    .dq-panel-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #35313A;
-        margin-bottom: 0.25rem;
-    }
-
-    .dq-panel-note {
-        color: #827C84;
-        font-size: 0.8rem;
-        line-height: 1.55;
     }
 
     .dq-status {
@@ -195,41 +184,99 @@ st.markdown(
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 0.5rem;
-        color: #918992;
-        font-size: 0.75rem;
+        color: #655965 !important;
+        font-size: 0.78rem;
+        line-height: 1.6;
         padding: 0.2rem 0 0.8rem;
     }
 
-    div[data-testid="stSelectbox"] label,
-    div[data-testid="stNumberInput"] label {
+    .dq-footer span {
+        color: #655965 !important;
+    }
+
+    [data-testid="stCaptionContainer"],
+    [data-testid="stCaptionContainer"] p {
+        color: #655965 !important;
+        opacity: 1 !important;
         font-size: 0.8rem;
-        font-weight: 500;
-        color: #625A65;
     }
 
-    div[data-testid="stSelectbox"] > div > div,
-    div[data-testid="stNumberInput"] input {
-        border-radius: 8px;
-        border-color: var(--dq-line);
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] p,
+    [data-testid="stSelectbox"] label,
+    [data-testid="stNumberInput"] label {
+        color: #625563 !important;
+        font-size: 0.82rem;
     }
 
-    div[data-testid="stDataFrame"] {
-        border: 1px solid var(--dq-line);
-        border-radius: 9px;
+    [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+        background: #FFFFFF !important;
+        border-color: #DCCDD4 !important;
+        color: #35313A !important;
+        border-radius: 8px !important;
+    }
+
+    [data-testid="stSelectbox"] div[data-baseweb="select"] * {
+        color: #35313A !important;
+    }
+
+    [data-testid="stNumberInput"] input {
+        background: #FFFFFF !important;
+        border-color: #DCCDD4 !important;
+        color: #35313A !important;
+        border-radius: 8px !important;
+        -webkit-text-fill-color: #35313A !important;
+    }
+
+    [data-baseweb="popover"],
+    [data-baseweb="menu"],
+    [role="listbox"] {
+        background: #FFFFFF !important;
+        color: #35313A !important;
+    }
+
+    [role="option"] {
+        background: #FFFFFF !important;
+        color: #35313A !important;
+    }
+
+    [role="option"]:hover {
+        background: #F2E5E9 !important;
+    }
+
+    [data-testid="stDataFrame"] {
+        background: #FFFFFF !important;
+        border: 1px solid #E2D7DD !important;
+        border-radius: 9px !important;
         overflow: hidden;
     }
 
-    div[data-testid="stAlert"] {
-        border-radius: 9px;
+    [data-testid="stDataFrame"] iframe {
+        background: #FFFFFF !important;
+    }
+
+    [data-testid="stPlotlyChart"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        background: transparent !important;
+    }
+
+    [data-testid="stHorizontalBlock"] {
+        min-width: 0;
+        gap: 1rem;
+    }
+
+    [data-testid="stAlert"] {
+        border-radius: 9px !important;
     }
 
     .stButton button {
         border-radius: 8px;
     }
 
-    @media (max-width: 768px) {
-        .block-container {
-            padding: 1.2rem 1rem;
+    @media (max-width: 900px) {
+        [data-testid="stMainBlockContainer"] {
+            padding: 1.25rem 1rem !important;
         }
 
         h1 {
@@ -298,6 +345,15 @@ validacao["situacao"] = validacao["situacao"].fillna(
 )
 
 
+def formatar_moeda(valor):
+    return (
+        f"R$ {valor:,.2f}"
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    )
+
+
 # Cabeçalho
 
 st.markdown(
@@ -337,16 +393,6 @@ valor_registrado = compras["valor_total"].sum()
 total_clientes = compras["cliente_id"].nunique()
 total_problemas = int((validacao["situacao"] != "OK").sum())
 
-
-def formatar_moeda(valor):
-    return (
-        f"R$ {valor:,.2f}"
-        .replace(",", "X")
-        .replace(".", ",")
-        .replace("X", ".")
-    )
-
-
 col1, col2, col3, col4 = st.columns(4)
 
 indicadores = [
@@ -376,13 +422,13 @@ st.caption("Soma dos valores informados nas compras.")
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
-col_titulo, col_cliente, col_metodo, col_valor = st.columns(
-    [1.25, 1, 1, 1]
-)
+st.subheader("Compras")
+st.caption("Consulte os registros.")
 
-with col_titulo:
-    st.subheader("Compras")
-    st.caption("Consulte os registros.")
+col_cliente, col_metodo, col_valor = st.columns(
+    [1, 1.3, 1],
+    gap="medium"
+)
 
 with col_cliente:
     clientes = sorted(
@@ -450,7 +496,7 @@ st.caption(
 
 st.markdown('<hr class="dq-rule">', unsafe_allow_html=True)
 
-grafico1, grafico2 = st.columns(2)
+grafico1, grafico2 = st.columns(2, gap="large")
 
 with grafico1:
     resumo_pagamentos = (
@@ -485,23 +531,38 @@ with grafico1:
         )
 
         fig_pagamentos.update_layout(
+            autosize=True,
+            height=max(300, 100 + 55 * len(resumo_pagamentos)),
             showlegend=False,
-            margin=dict(l=5, r=30, t=55, b=15),
+            margin=dict(l=10, r=35, t=65, b=35),
             yaxis_title=None,
             xaxis_title=None,
             bargap=0.45,
-            font=dict(family="Arial, sans-serif", color=TEXTO),
+            font=dict(
+                family="Arial, sans-serif",
+                color=TEXTO,
+                size=12
+            ),
             title_font=dict(size=16, color=TEXTO),
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(showgrid=True, gridcolor=LINHA, zeroline=False),
-            yaxis=dict(showgrid=False)
+            xaxis=dict(
+                showgrid=True,
+                gridcolor=LINHA,
+                zeroline=False,
+                automargin=True
+            ),
+            yaxis=dict(
+                showgrid=False,
+                automargin=True
+            )
         )
 
         st.plotly_chart(
             fig_pagamentos,
             use_container_width=True,
-            theme=None
+            theme=None,
+            config={"responsive": True, "displayModeBar": False}
         )
 
 with grafico2:
@@ -516,7 +577,7 @@ with grafico2:
     if resumo_datas.empty:
         st.info("Nenhuma data disponível.")
     else:
-        fig_receita = px.line(
+        fig_valores = px.line(
             resumo_datas,
             x="data_compra",
             y="valor_total",
@@ -528,30 +589,46 @@ with grafico2:
             }
         )
 
-        fig_receita.update_traces(
+        fig_valores.update_traces(
             line=dict(color=ROSA, width=2.5),
             marker=dict(size=7, color=ROSA),
             fill="tozeroy",
             fillcolor="rgba(184,93,123,0.08)"
         )
 
-        fig_receita.update_layout(
-            margin=dict(l=5, r=15, t=55, b=15),
+        fig_valores.update_layout(
+            autosize=True,
+            height=355,
+            margin=dict(l=15, r=20, t=65, b=35),
             xaxis_title=None,
             yaxis_title=None,
-            font=dict(family="Arial, sans-serif", color=TEXTO),
+            font=dict(
+                family="Arial, sans-serif",
+                color=TEXTO,
+                size=12
+            ),
             title_font=dict(size=16, color=TEXTO),
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(showgrid=False, zeroline=False),
-            yaxis=dict(showgrid=True, gridcolor=LINHA, zeroline=False),
+            xaxis=dict(
+                showgrid=False,
+                zeroline=False,
+                automargin=True
+            ),
+            yaxis=dict(
+                showgrid=True,
+                gridcolor=LINHA,
+                zeroline=False,
+                automargin=True
+            ),
             hovermode="x unified"
         )
 
         st.plotly_chart(
-            fig_receita,
+            fig_valores,
             use_container_width=True,
-            theme=None
+            theme=None,
+            config={"responsive": True, "displayModeBar": False}
         )
 
 
@@ -591,22 +668,37 @@ else:
     )
 
     fig_produtos.update_layout(
+        autosize=True,
+        height=max(300, 100 + 55 * len(resumo_produtos)),
         showlegend=False,
-        margin=dict(l=5, r=30, t=15, b=15),
+        margin=dict(l=10, r=35, t=20, b=35),
         xaxis_title=None,
         yaxis_title=None,
         bargap=0.4,
-        font=dict(family="Arial, sans-serif", color=TEXTO),
+        font=dict(
+            family="Arial, sans-serif",
+            color=TEXTO,
+            size=12
+        ),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        xaxis=dict(showgrid=True, gridcolor=LINHA, zeroline=False),
-        yaxis=dict(showgrid=False)
+        xaxis=dict(
+            showgrid=True,
+            gridcolor=LINHA,
+            zeroline=False,
+            automargin=True
+        ),
+        yaxis=dict(
+            showgrid=False,
+            automargin=True
+        )
     )
 
     st.plotly_chart(
         fig_produtos,
         use_container_width=True,
-        theme=None
+        theme=None,
+        config={"responsive": True, "displayModeBar": False}
     )
 
 
