@@ -47,3 +47,6 @@ data-quality-dashboard/
 
 Este é um projeto demonstrativo com dados ilustrativos.
 Os resultados não representam dados reais de uma empresa.
+
+## LINK 
+https://data-quality-studio-bia.streamlit.app/#data-quality-studio
