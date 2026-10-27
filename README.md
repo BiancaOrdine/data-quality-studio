@@ -92,6 +92,36 @@ data-quality-studio/
 
 ## Observação
 
+
+## Como executar os testes automatizados
+
+O projeto possui testes automatizados para verificar a validação dos dados de compras, incluindo compras com valores corretos, compras sem pedidos associados e divergências entre o valor registrado e o valor calculado.
+
+### Pré-requisitos
+
+- Python instalado.
+- Java compatível com a versão do PySpark utilizada.
+- Dependências do projeto instaladas.
+
+### Instalação das dependências de teste
+
+Após instalar as dependências do projeto, execute:
+
+```bash
+pip install pyspark pytest
+```
+
+### Execução dos testes
+
+Na pasta raiz do projeto, execute:
+
+```bash
+python -m pytest tests/ -v
+```
+
+O comando executa os testes encontrados na pasta `tests/` e apresenta o resultado de cada teste no terminal.
+
+<br/>
 Este é um projeto demonstrativo desenvolvido para fins de aprendizado e portfólio. Os dados são ilustrativos e não representam informações reais de uma empresa.
 
 ---
